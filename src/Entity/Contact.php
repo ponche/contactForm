@@ -36,6 +36,17 @@ class Contact
      */
     private $message;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Department", inversedBy="contacts")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $department;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createAt;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -85,6 +96,30 @@ class Contact
     public function setMessage(string $message): self
     {
         $this->message = $message;
+
+        return $this;
+    }
+
+    public function getDepartment(): ?Department
+    {
+        return $this->department;
+    }
+
+    public function setDepartment(?Department $department): self
+    {
+        $this->department = $department;
+
+        return $this;
+    }
+
+    public function getCreateAt(): ?\DateTimeInterface
+    {
+        return $this->createAt;
+    }
+
+    public function setCreateAt(\DateTimeInterface $createAt): self
+    {
+        $this->createAt = $createAt;
 
         return $this;
     }
