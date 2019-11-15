@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,11 +9,9 @@ use App\Entity\Contact;
 use App\Form\ContactType;
 use App\Repository\DepartmentRepository;
 use App\Services\MailManager;
-use Doctrine\ORM\EntityManager;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\Post;
-use FOS\RestBundle\Request\ParamFetcher;
 use FOS\RestBundle\View\View;
 
 /**
@@ -22,9 +19,7 @@ use FOS\RestBundle\View\View;
  */
 class ApiController extends AbstractFOSRestController
 {
-    private $mailManager;
     private $departmentRepository;
-    private $em; 
 
     public function __construct(DepartmentRepository $departmentRepository)
     {
@@ -38,14 +33,13 @@ class ApiController extends AbstractFOSRestController
     {
 
         $contact = new Contact();
-        $view = View::create();
-        $view->setFormat('json');
         $form = $this->createForm(ContactType::class, $contact, [
             'csrf_protection' => false,
         ]);
-        $form->handleRequest($request);
+        $form->submit($request->request->all());
 
         if ($form->isSubmitted() && $form->isValid()) {
+
             $contact->setCreateAt(new \DateTime()); 
 
             $entityManager = $this->getDoctrine()->getManager();
