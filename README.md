@@ -22,8 +22,29 @@
 5. inject the fake data by typing : `php bin/console do:fi:lo`
 
 
+## API 
 
+POST /api/contact 
 
+example data to send : 
+```json
+{
+    "department": "1",
+    "firstname": "Foo",
+    "lastname": "Bar",
+    "mail": "foo@example.com",
+    "message": "lorem ipsum"
+}
+```
 
+GET /api/departments 
 
+GET /api/department/{id}
 
+example data get : 
+```json
+{
+    "id": "1", 
+    "name": "Dev"
+}
+```
