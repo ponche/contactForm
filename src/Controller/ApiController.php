@@ -9,6 +9,7 @@ use App\Entity\Contact;
 use App\Form\ContactType;
 use App\Repository\DepartmentRepository;
 use App\Services\MailManager;
+use DateTime;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\Post;
@@ -20,36 +21,35 @@ use FOS\RestBundle\View\View;
 class ApiController extends AbstractFOSRestController
 {
     private $departmentRepository;
+    private $contact;
 
     public function __construct(DepartmentRepository $departmentRepository)
     {
-       $this->departmentRepository = $departmentRepository;
+        $this->departmentRepository = $departmentRepository;
+        $this->contact = new Contact();
+        $this->contact->setCreateAt(new DateTime());
     }
-    
+
     /**
      * @Post("/contact")
      */
     public function postContactsAction(Request $request, MailManager $mailManager)
     {
 
-        $contact = new Contact();
-        $form = $this->createForm(ContactType::class, $contact, [
+        $form = $this->createForm(ContactType::class, $this->contact, [
             'csrf_protection' => false,
         ]);
         $form->submit($request->request->all());
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $contact->setCreateAt(new \DateTime()); 
-
             $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($contact);
+            $entityManager->persist($this->contact);
             $entityManager->flush();
 
-            $mailManager->sendMailToDepartment($contact); 
+            $mailManager->sendMailToDepartment($this->contact);
 
-
-            $view = $this->view($contact, Response::HTTP_CREATED);
+            $view = $this->view($this->contact, Response::HTTP_CREATED);
             $view->setFormat('json');
             return $this->handleView($view);
         }
@@ -57,7 +57,6 @@ class ApiController extends AbstractFOSRestController
         $view = $this->view($form, Response::HTTP_BAD_REQUEST);
         $view->setFormat('json');
         return $this->handleView($view);
-        
     }
 
     /**
@@ -65,11 +64,10 @@ class ApiController extends AbstractFOSRestController
      */
     public function getDepartmentsAction()
     {
-        $listDepartment = $this->departmentRepository->findAll(); 
+        $listDepartment = $this->departmentRepository->findAll();
         $view = View::create($listDepartment, Response::HTTP_OK);
-        $view->setFormat('json'); 
+        $view->setFormat('json');
 
         return $this->handleView($view);
-
     }
 }
