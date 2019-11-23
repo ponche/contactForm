@@ -72,15 +72,4 @@ class ApiController extends AbstractFOSRestController
         return $this->handleView($view);
 
     }
-    /**
-     * @Get("/department/{id}")
-     */
-    public function getDepartmentAction($id)
-    {  
-        $listDepartment = $this->departmentRepository->find($id); 
-        $view = View::create($listDepartment, Response::HTTP_OK);
-        $view->setFormat('json'); 
-
-        return $this->handleView($view);
-    }
 }
