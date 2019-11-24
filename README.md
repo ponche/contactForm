@@ -39,8 +39,6 @@ example data to send :
 
 GET /api/departments 
 
-GET /api/department/{id}
-
 example data get : 
 ```json
 {
